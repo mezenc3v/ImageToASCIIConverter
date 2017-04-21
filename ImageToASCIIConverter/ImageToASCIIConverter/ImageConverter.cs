@@ -4,50 +4,43 @@ using System.Windows.Media.Imaging;
 
 namespace ImageToASCIIConverter
 {
-    public class Converters
+    public static class ImageConverter
     {
-        private readonly BitmapSource _sourceImage;
         private const int DataFormatSize = 4;
-        private const double CharsCount = 10000;
 
-        public Converters(BitmapSource image)
+        public static string ToAscii(BitmapSource sourceImage, int resolution = 10000)
         {
-            _sourceImage = image;
-        }
+            var imageAsText = "";
 
-        public string GetTextFile()
-        {
-            var textFile = "";
+            double[,] grayscaleArray = ImageToGrayscale(sourceImage);
+            double[,] grayscaleArrayResized = ResizeImage(grayscaleArray, resolution);
 
-            var grayscaleArray = ImageToGrayscale(_sourceImage);
-            var grayscaleArrayResized = ResizeImage(grayscaleArray);
-
-            var averageColor = grayscaleArrayResized.Cast<double>().Sum() / grayscaleArrayResized.Length;
-            var chars = new[] {'.', '*'};
+            double averageColor = grayscaleArrayResized.Cast<double>().Sum() / grayscaleArrayResized.Length;
+            var chars = new char[] { '.', '*' };
             var counter = 0;
 
             foreach (var pixel in grayscaleArrayResized)
             {
                 if (counter == grayscaleArrayResized.GetLength(1))
                 {
-                    textFile += "\n";
+                    imageAsText += "\r\n";
                     counter = 0;
                 }
                 if (pixel < averageColor)
                 {
-                    textFile += chars[0];
+                    imageAsText += chars[0];
                 }
                 else
                 {
-                    textFile += chars[1];
+                    imageAsText += chars[1];
                 }
                 counter++;
             }
 
-            return textFile;
+            return imageAsText;
         }
 
-        private double[,] ImageToGrayscale(BitmapSource image)
+        private static double[,] ImageToGrayscale(BitmapSource image)
         {
             var grayscaleImage = new double[image.PixelHeight, image.PixelWidth];
             var stride = image.PixelWidth * DataFormatSize;
@@ -62,8 +55,8 @@ namespace ImageToASCIIConverter
                 {
                     var pixelIndex = y * stride + DataFormatSize * x;
 
-                    grayscaleImage[y, x] = 0.299 * data[pixelIndex + 1] 
-                        + 0.5870 * data[pixelIndex + 2] 
+                    grayscaleImage[y, x] = 0.299 * data[pixelIndex + 1]
+                        + 0.5870 * data[pixelIndex + 2]
                         + 0.1140 * data[pixelIndex + 3];
                 }
             }
@@ -71,9 +64,9 @@ namespace ImageToASCIIConverter
             return grayscaleImage;
         }
 
-        private double[,] ResizeImage(double[,] image)
+        private static double[,] ResizeImage(double[,] image, int resolution)
         {
-            var ratio = image.Length / CharsCount;
+            var ratio = image.Length / (double)resolution;
             var height = image.GetLength(1) / Math.Sqrt(ratio);
             var width = image.GetLength(0) / Math.Sqrt(ratio);
             var resizedImage = new double[(int)width, (int)height];
