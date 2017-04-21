@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageToASCIIConverter"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="ImageToASCIIConverter" Height="550" Width="400" MaxHeight="600" MaxWidth="600" MinHeight="500" MinWidth="400">
     <Grid>
@@ -11,7 +12,10 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="175"></RowDefinition>
         </Grid.RowDefinitions>
+
         <Image Grid.Row="0" Name="SourceImage" Stretch="Uniform" />
+        <Image Grid.Row="0" Name="Loading" Stretch="Uniform" gif:ImageBehavior.AnimatedSource="Images\download.gif" Width="120" Height="120"/>
+
         <StackPanel Grid.Row="1" Orientation="Vertical">
             <Button x:Name="ReadImageBtn" Content="Open image" Click="ReadImageBtn_Click" Height="25"/>
             <Button x:Name="SaveTextFileBtn" Content="Save as text" Click="SaveTextFileBtn_Click" Height="25"/>

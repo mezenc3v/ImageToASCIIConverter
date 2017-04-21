@@ -17,11 +17,11 @@ namespace ImageToASCIIConverter
     /// </summary>
     public partial class MainWindow
     {
-        private BitmapImage _image;
-
+        private string _imgPath;
         public MainWindow()
         {
             InitializeComponent();
+            Loading.Visibility = Visibility.Hidden;
         }
 
         private void ReadImageBtn_Click(object sender, RoutedEventArgs e)
@@ -30,7 +30,7 @@ namespace ImageToASCIIConverter
             {
                 Filter =
                     "JPG Files (*.jpg)|*.jpg|bmp files (*.bmp)|*.bmp|JPEG Files (*.jpeg)|*.jpeg|PNG Files (*.png)" +
-                    "|*.png|GIF Files (*.gif)|*.gif|All files (*.*)|*.*",
+                    "|*.png|GIF Files (*.loading)|*.loading|All files (*.*)|*.*",
                 RestoreDirectory = true
             };
 
@@ -38,8 +38,9 @@ namespace ImageToASCIIConverter
             {
                 try
                 {
-                    _image = new BitmapImage(new Uri(fileDialog.FileName));
-                    SourceImage.Source = _image;
+                    _imgPath = fileDialog.FileName;
+                    var image = new BitmapImage(new Uri(fileDialog.FileName));
+                    SourceImage.Source = image;
 
                     LogTextBox.AppendLine("Image was successfully read.", Brushes.DarkGreen);
                 }
@@ -54,29 +55,50 @@ namespace ImageToASCIIConverter
             }
         }
 
-        private void SaveTextFileBtn_Click(object sender, RoutedEventArgs e)
+        private async void SaveTextFileBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (_image == null)
+            SaveTextFileBtn.IsEnabled = false;
+            double resolution = ResolutionSlider.Value;
+            await Task.Run(() =>
             {
-                LogTextBox.AppendLine("Open image first, please.", Color.FromRgb(0, 150, 150));
-                return;
-            }
+                if (string.IsNullOrEmpty(_imgPath))
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        LogTextBox.AppendLine("Open image first, please.", Color.FromRgb(0, 150, 150));
+                    });
+                    return;
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    Loading.Visibility = Visibility.Visible;
+                    SourceImage.Visibility = Visibility.Hidden;
+                    LogTextBox.AppendLine("processing, please wait...", Brushes.DarkGreen);
+                });
+                var convertedImageText = ImageConverter.ToAscii(_imgPath, (int)resolution);
 
-            var convertedImageText = ImageConverter.ToAscii(_image, (int) ResolutionSlider.Value);
+                Dispatcher.Invoke(() =>
+                {
+                    Loading.Visibility = Visibility.Hidden;
+                    SourceImage.Visibility = Visibility.Visible;
 
-            var fileDialog = new SaveFileDialog
-            {
-                FileName = "TextImageASCIIFile",
-                DefaultExt = ".txt",
-                Filter = "Text Files |.txt",
-                RestoreDirectory = true
-            };
+                    var fileDialog = new SaveFileDialog
+                    {
+                        FileName = "TextImageASCIIFile",
+                        DefaultExt = ".txt",
+                        Filter = "Text Files |.txt",
+                        RestoreDirectory = true
+                    };
 
-            if (fileDialog.ShowDialog() == true)
-            {
-                File.WriteAllText(fileDialog.FileName, convertedImageText, Encoding.ASCII);
-                LogTextBox.AppendLine("Image converted and file was successfully created.", Brushes.DarkGreen);
-            }
+                    if (fileDialog.ShowDialog() == true)
+                    {
+                        File.WriteAllText(fileDialog.FileName, convertedImageText, Encoding.ASCII);
+                        LogTextBox.AppendLine("Image converted and file was successfully created.", Brushes.DarkGreen);
+                    }
+                });
+            });
+
+            SaveTextFileBtn.IsEnabled = true;
         }
     }
 }

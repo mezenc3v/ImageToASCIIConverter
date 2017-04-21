@@ -40,6 +40,12 @@ namespace ImageToASCIIConverter
             return imageAsText;
         }
 
+        public static string ToAscii(string imageFilePath, int resolution = 10000)
+        {
+            var image = new BitmapImage(new Uri(imageFilePath));
+            return ToAscii(image, resolution);
+        }
+
         private static double[,] ImageToGrayscale(BitmapSource image)
         {
             var grayscaleImage = new double[image.PixelHeight, image.PixelWidth];
