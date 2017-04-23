@@ -9,14 +9,14 @@ namespace ImageToASCIIConverter.Extensions
     {
         public static void AppendLine(this RichTextBox richTextBox, string text)
         {
-            richTextBox.AppendText($"{text}\n");
+            richTextBox.AppendText(DateTime.Now.ToString("hh:mm:ss") + " -> " +$"{text}\n");
         }
 
         public static void AppendLine(this RichTextBox richTextBox, string text, Brush foregroundColor)
         {
             var tr = new TextRange(richTextBox.Document.ContentEnd, richTextBox.Document.ContentEnd)
             {
-                Text = $"{text}\n"
+                Text = DateTime.Now.ToString("hh:mm:ss") + " -> " + $"{text}\n"
             };
             try
             {

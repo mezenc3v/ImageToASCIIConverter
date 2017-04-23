@@ -17,7 +17,7 @@
         <Image Grid.Row="0" Name="Loading" Stretch="Uniform" gif:ImageBehavior.AnimatedSource="Images\download.gif" Width="120" Height="120"/>
 
         <StackPanel Grid.Row="1" Orientation="Vertical">
-            <Button x:Name="ReadImageBtn" Content="Open image" Click="ReadImageBtn_Click" Height="25"/>
+            <Button x:Name="ReadImageBtn" Content="Open image" Click="ReadImageBtn_Click" Height="25" Margin="0,0,0,2"/>
             <Button x:Name="SaveTextFileBtn" Content="Save as text" Click="SaveTextFileBtn_Click" Height="25"/>
             <Grid x:Name="ResolutionStackPanel" HorizontalAlignment="Stretch" Height="25">
                 <Grid.ColumnDefinitions>
@@ -39,7 +39,7 @@
                         IsSnapToTickEnabled="True"/>
                 <TextBlock Grid.Column="2" Text="{Binding ElementName=ResolutionSlider, Path=Value}" TextAlignment="Right" VerticalAlignment="Center" Padding="0,0,5,0"></TextBlock>
             </Grid>
-            <RichTextBox x:Name="LogTextBox" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" Height="100" Background="White">
+            <RichTextBox x:Name="LogTextBox" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" VerticalAlignment="Stretch" Height="95" Background="White">
                 <RichTextBox.Resources>
                     <Style TargetType="{x:Type Paragraph}">
                         <Setter Property="Margin" Value="0"/>

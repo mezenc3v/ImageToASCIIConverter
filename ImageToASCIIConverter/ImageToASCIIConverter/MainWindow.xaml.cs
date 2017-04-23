@@ -73,7 +73,7 @@ namespace ImageToASCIIConverter
                 {
                     Loading.Visibility = Visibility.Visible;
                     SourceImage.Visibility = Visibility.Hidden;
-                    LogTextBox.AppendLine("processing, please wait...", Brushes.DarkGreen);
+                    LogTextBox.AppendLine("Processing, please wait...", Brushes.DarkGreen);
                 });
                 var convertedImageText = ImageConverter.ToAscii(_imgPath, (int)resolution);
 
